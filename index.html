@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday Ngọc Lii</title>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #5a2a12, #0e0601f5);
+}
+
+/* ===== CANVAS ===== */
+canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+}
+
+/* ===== IMAGE ===== */
+.image-box {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 18vw;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.image-shadow {
+    opacity: 0;
+    transform: translateY(120vh);
+    animation: riseAndHold 12s ease-in-out infinite;
+}
+
+.image-shadow img {
+    width: min(50vw, 280px);
+    border-radius: 8px;
+    box-shadow:
+        12px 12px 0 rgba(70, 30, 10, 0.9),
+        22px 22px 34px rgba(255, 150, 80, 0.45);
+    filter:
+        drop-shadow(0 0 40px rgba(255,200,130,0.8))
+        drop-shadow(0 0 80px rgba(255,150,80,0.5))
+        drop-shadow(0 0 140px rgba(255,120,50,0.35));
+}
+
+@keyframes riseAndHold {
+    0%   { transform: translateY(120vh); opacity: 0; }
+    18%  { transform: translateY(0); opacity: 1; }
+    60%  { transform: translateY(0); opacity: 1; }
+    80%  { transform: translateY(0); opacity: 0; }
+    100% { transform: translateY(120vh); opacity: 0; }
+}
+
+/* ===== TEXT ===== */
+.birthday-text {
+    position: fixed;
+    right: 10vw;
+    top: 8vh;
+    bottom: 8vh;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+}
+
+.birthday-text p {
+    font-family: "Brush Script MT", "Lucida Handwriting", cursive;
+    font-size: clamp(18px, 2.2vw, 28px);
+    line-height: 1.65;
+    color: #ffe3c4;
+    white-space: pre-line;
+    text-shadow:
+        0 0 6px rgba(255,210,160,0.85),
+        0 0 14px rgba(255,180,110,0.75),
+        0 0 28px rgba(255,140,70,0.6),
+        0 0 50px rgba(255,110,40,0.45);
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div class="image-box">
+    <div class="image-shadow">
+        <img src="llii.png" alt="">
+    </div>
+</div>
+
+<div class="birthday-text">
+    <p id="text">
+Chào Ngọc Lii, chúc mừng sinh nhật bạn 🎉
+
+Tuy là chỉ mới quen biết vài ngày,
+nhưng tôi cảm thấy mến bạn.
+
+Nhân dịp sinh nhật bạn,
+tôi không có món quà gì đặc biệt,
+nhưng đây cũng là món quà về mặt 
+tinh thần và đầy ý nghĩa.
+
+Chúc bạn có ngày sinh nhật
+thật vui vẻ, hạnh phúc bên gia đình,
+ bạn bè và ngày càng xinh nha! 💖
+    </p>
+</div>
+
+<script>
+/* ===== CANVAS ===== */
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+}
+resize();
+addEventListener("resize", resize);
+
+/* ===== PARTICLES ===== */
+const COUNT = Math.min(800, innerWidth * 0.5);
+const particles = [];
+
+for (let i = 0; i < COUNT; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() < 0.85 ? 1 : 2,
+        vy: Math.random() * 0.6 + 0.4,
+        vx: Math.random() * 0.3 - 0.15,
+        a: Math.random() * 0.5 + 0.4
+    });
+}
+
+/* ===== TYPEWRITER ===== */
+const textEl = document.getElementById("text");
+const fullText = textEl.innerHTML.trim();
+textEl.innerHTML = "";
+
+let ti = 0;
+function typeText() {
+    if (ti < fullText.length) {
+        textEl.innerHTML += fullText[ti++];
+        setTimeout(typeText, 45);
+    }
+}
+setTimeout(typeText, 5000);
+
+/* ===== LOOP ===== */
+function animate() {
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (const p of particles) {
+        p.y -= p.vy;
+        p.x += Math.sin(p.y * 0.02) * p.vx;
+
+        if (p.y < -20) {
+            p.y = canvas.height + 20;
+            p.x = Math.random() * canvas.width;
+        }
+
+        ctx.globalAlpha = p.a;
+        if (p.r === 1) {
+            ctx.fillStyle = "#ffdcb0";
+            ctx.fillRect(p.x, p.y, 1.2, 1.2);
+        } else {
+            ctx.shadowBlur = 6;
+            ctx.shadowColor = "rgba(255,170,90,0.6)";
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
+
+
+
